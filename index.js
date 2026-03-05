@@ -19,11 +19,6 @@ function getTagNamesForCharacter(character) {
 function groupAndRenderCards() {
     const debug = $("#tcg_debug");
 
-    if (!extension_settings[extensionName]?.enabled) {
-        debug.text("❌ Extension désactivée");
-        return;
-    }
-
     const context = getContext();
     const characters = context.characters;
     if (!characters || !characters.length) {
@@ -31,19 +26,38 @@ function groupAndRenderCards() {
         return;
     }
 
-    const characterList = $("#character_list");
-    if (!characterList.length) {
-        debug.text("❌ #character_list introuvable");
+    const possibleSelectors = [
+        "#character_list",
+        "#rm_print_characters_block",
+        ".character_list",
+        "#charListGridOrSlide",
+        "#rm_characters_block"
+    ];
+
+    let characterList = null;
+    let foundSelector = null;
+
+    for (const sel of possibleSelectors) {
+        const el = $(sel);
+        if (el.length) {
+            characterList = el;
+            foundSelector = sel;
+            break;
+        }
+    }
+
+    if (!characterList) {
+        debug.text("❌ Aucun conteneur trouvé parmi : " + possibleSelectors.join(", "));
         return;
     }
 
     const cards = characterList.find(".character_select");
     if (!cards.length) {
-        debug.text("❌ Aucune card trouvée dans #character_list");
+        debug.text(`✅ Conteneur trouvé: ${foundSelector} mais 0 cards`);
         return;
     }
 
-    debug.text(`✅ ${characters.length} persos, ${cards.length} cards trouvées`);
+    debug.text(`✅ ${foundSelector} — ${cards.length} cards`);
 
     $(".tcg-group-header").remove();
 
