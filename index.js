@@ -17,30 +17,43 @@ function getTagNamesForCharacter(character) {
 }
 
 function groupAndRenderCards() {
-    if (!extension_settings[extensionName]?.enabled) return;
+    const debug = $("#tcg_debug");
+
+    if (!extension_settings[extensionName]?.enabled) {
+        debug.text("❌ Extension désactivée");
+        return;
+    }
 
     const context = getContext();
     const characters = context.characters;
-    if (!characters || !characters.length) return;
+    if (!characters || !characters.length) {
+        debug.text("❌ Aucun personnage trouvé");
+        return;
+    }
 
     const characterList = $("#character_list");
-    if (!characterList.length) return;
-
-    // Remove old headers
-    $(".tcg-group-header").remove();
+    if (!characterList.length) {
+        debug.text("❌ #character_list introuvable");
+        return;
+    }
 
     const cards = characterList.find(".character_select");
-    if (!cards.length) return;
+    if (!cards.length) {
+        debug.text("❌ Aucune card trouvée dans #character_list");
+        return;
+    }
+
+    debug.text(`✅ ${characters.length} persos, ${cards.length} cards trouvées`);
+
+    $(".tcg-group-header").remove();
 
     const groups = { male: [], female: [], others: {}, untagged: [] };
 
     cards.each(function () {
         const chid = parseInt($(this).attr("chid"));
         if (isNaN(chid)) return;
-
         const character = characters[chid];
         if (!character) return;
-
         const tagNames = getTagNamesForCharacter(character);
 
         if (tagNames.includes("male")) {
@@ -56,6 +69,22 @@ function groupAndRenderCards() {
         }
     });
 
+    cards.detach();
+
+    function appendGroup(label, items) {
+        if (!items.length) return;
+        const header = $(`<div class="tcg-group-header"><span>${label}</span><small>${items.length}</small></div>`);
+        characterList.append(header);
+        items.forEach(card => characterList.append(card));
+    }
+
+    appendGroup("♂ Male", groups.male);
+    appendGroup("♀ Female", groups.female);
+    Object.keys(groups.others).sort().forEach(tag => appendGroup(`🏷 ${tag}`, groups.others[tag]));
+    appendGroup("📌 Untagged", groups.untagged);
+
+    debug.text(`✅ Groupé ! M:${groups.male.length} F:${groups.female.length} Autres:${Object.keys(groups.others).length} Sans tag:${groups.untagged.length}`);
+}
     // Detach all cards
     cards.detach();
 
