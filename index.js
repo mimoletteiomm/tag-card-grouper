@@ -85,23 +85,6 @@ function groupAndRenderCards() {
 
     debug.text(`✅ Groupé ! M:${groups.male.length} F:${groups.female.length} Autres:${Object.keys(groups.others).length} Sans tag:${groups.untagged.length}`);
 }
-    // Detach all cards
-    cards.detach();
-
-    function appendGroup(label, items) {
-        if (!items.length) return;
-        const header = $(`<div class="tcg-group-header"><span>${label}</span><small>${items.length}</small></div>`);
-        characterList.append(header);
-        items.forEach(card => characterList.append(card));
-    }
-
-    appendGroup("♂ Male", groups.male);
-    appendGroup("♀ Female", groups.female);
-    Object.keys(groups.others).sort().forEach(tag => appendGroup(`🏷 ${tag}`, groups.others[tag]));
-    appendGroup("📌 Untagged", groups.untagged);
-
-    console.log(`[${extensionName}] ✅ Cards grouped`);
-}
 
 jQuery(async () => {
     console.log(`[${extensionName}] Loading...`);
