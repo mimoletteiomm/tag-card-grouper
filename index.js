@@ -1,5 +1,5 @@
-import { extension_settings, getContext } from "../../../extensions.js";
-import { saveSettingsDebounced, eventSource, event_types } from "../../../../script.js";
+import { extension_settings } from "../../../extensions.js";
+import { saveSettingsDebounced, eventSource, event_types, characters } from "../../../../script.js";
 import { tags, tag_map } from "../../../tags.js";
 
 const extensionName = "tag-card-grouper";
@@ -19,10 +19,8 @@ function getTagNamesForCharacter(character) {
 function groupAndRenderCards() {
     const debug = $("#tcg_debug");
 
-    const context = getContext();
-    const characters = context.characters;
     if (!characters || !characters.length) {
-        debug.text("❌ Aucun personnage trouvé");
+        debug.text("❌ Aucun personnage trouvé (characters vide)");
         return;
     }
 
@@ -47,17 +45,17 @@ function groupAndRenderCards() {
     }
 
     if (!characterList) {
-        debug.text("❌ Aucun conteneur trouvé parmi : " + possibleSelectors.join(", "));
+        debug.text("❌ Aucun conteneur trouvé");
         return;
     }
 
     const cards = characterList.find(".character_select");
     if (!cards.length) {
-        debug.text(`✅ Conteneur trouvé: ${foundSelector} mais 0 cards`);
+        debug.text(`✅ Conteneur: ${foundSelector} mais 0 cards`);
         return;
     }
 
-    debug.text(`✅ ${foundSelector} — ${cards.length} cards`);
+    debug.text(`✅ ${foundSelector} — ${cards.length} cards — ${characters.length} persos`);
 
     $(".tcg-group-header").remove();
 
@@ -123,6 +121,7 @@ jQuery(async () => {
         $("#tcg_apply_button").on("click", groupAndRenderCards);
 
         eventSource.on(event_types.CHARACTER_LIST_UPDATED, groupAndRenderCards);
+        eventSource.on(event_types.CHARACTERS_LOADED, groupAndRenderCards);
 
         setTimeout(groupAndRenderCards, 3000);
         setTimeout(groupAndRenderCards, 6000);
