@@ -110,7 +110,8 @@ jQuery(async () => {
 
         eventSource.on(event_types.CHARACTER_LIST_UPDATED, groupAndRenderCards);
 
-        setTimeout(groupAndRenderCards, 1000);
+        setTimeout(groupAndRenderCards, 3000);
+        setTimeout(groupAndRenderCards, 6000);
 
         console.log(`[${extensionName}] ✅ Loaded successfully`);
     } catch (error) {
