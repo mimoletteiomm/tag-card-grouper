@@ -1,1 +1,21 @@
-/* Empty for now */
+.tcg-group-header {
+    width: 100%;
+    padding: 6px 12px;
+    margin: 10px 0 4px 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.08), transparent);
+    border-left: 3px solid #aaa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.85em;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tcg-group-header small {
+    opacity: 0.5;
+    font-size: 0.8em;
+    font-weight: normal;
+}
